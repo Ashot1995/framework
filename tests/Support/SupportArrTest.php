@@ -8,6 +8,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ItemNotFoundException;
+use Illuminate\Support\LazyCollection;
 use Illuminate\Support\MultipleItemsFoundException;
 use Illuminate\Tests\Support\Fixtures\TestArrayableObject;
 use Illuminate\Tests\Support\Fixtures\TestBackedEnum;
@@ -126,6 +127,10 @@ class SupportArrTest extends TestCase
         $collection = collect(['baz', 'boom']);
         $mixedArray = [[1], [2], [3], ['foo', 'bar'], $collection];
         $this->assertEquals([1, 2, 3, 'foo', 'bar', 'baz', 'boom'], Arr::collapse($mixedArray));
+
+        // Case including lazy collections
+        $mixedArray = [[1], LazyCollection::make([2, 3]), collect([4]), ['foo']];
+        $this->assertEquals([1, 2, 3, 4, 'foo'], Arr::collapse($mixedArray));
     }
 
     public function testCrossJoin()

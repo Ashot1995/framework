@@ -121,7 +121,7 @@ class Arr
         $results = [];
 
         foreach ($array as $values) {
-            if ($values instanceof Collection) {
+            if ($values instanceof Enumerable) {
                 $results[] = $values->all();
             } elseif (is_array($values)) {
                 $results[] = $values;

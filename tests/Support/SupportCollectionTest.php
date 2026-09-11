@@ -1949,6 +1949,13 @@ class SupportCollectionTest extends TestCase
     }
 
     #[DataProvider('collectionClassProvider')]
+    public function testCollapseWithNestedLazyCollections($collection)
+    {
+        $data = new $collection([new LazyCollection([1, 2, 3]), [4], new Collection([5, 6])]);
+        $this->assertEquals([1, 2, 3, 4, 5, 6], $data->collapse()->all());
+    }
+
+    #[DataProvider('collectionClassProvider')]
     public function testCollapseWithKeys($collection)
     {
         $data = new $collection([[1 => 'a'], [3 => 'c'], [2 => 'b'], 'drop']);
@@ -1963,6 +1970,13 @@ class SupportCollectionTest extends TestCase
     public function testCollapseWithKeysOnNestedCollections($collection)
     {
         $data = new $collection([new $collection(['a' => '1a', 'b' => '1b']), new $collection(['b' => '2b', 'c' => '2c']), 'drop']);
+        $this->assertEquals(['a' => '1a', 'b' => '2b', 'c' => '2c'], $data->collapseWithKeys()->all());
+    }
+
+    #[DataProvider('collectionClassProvider')]
+    public function testCollapseWithKeysOnNestedLazyCollections($collection)
+    {
+        $data = new $collection([new LazyCollection(['a' => '1a', 'b' => '1b']), new Collection(['b' => '2b', 'c' => '2c']), 'drop']);
         $this->assertEquals(['a' => '1a', 'b' => '2b', 'c' => '2c'], $data->collapseWithKeys()->all());
     }
 
