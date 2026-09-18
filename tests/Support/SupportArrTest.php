@@ -1176,6 +1176,36 @@ class SupportArrTest extends TestCase
         $this->assertEquals(['1-a-0', '2-b-1'], $result);
     }
 
+    public function testFlatMap()
+    {
+        $data = [
+            ['name' => 'Taylor', 'hobbies' => ['coding', 'cars']],
+            ['name' => 'Adam', 'hobbies' => ['music']],
+        ];
+
+        $result = Arr::flatMap($data, function ($person) {
+            return $person['hobbies'];
+        });
+
+        $this->assertSame(['coding', 'cars', 'music'], $result);
+
+        $result = Arr::flatMap([1, 2, 3], function ($number) {
+            return [$number, $number * 10];
+        });
+
+        $this->assertSame([1, 10, 2, 20, 3, 30], $result);
+
+        $result = Arr::flatMap(['a' => 1, 'b' => 2], function ($value, $key) {
+            return [$key => $value * 2];
+        });
+
+        $this->assertSame(['a' => 2, 'b' => 4], $result);
+
+        $this->assertSame([], Arr::flatMap([], function ($value) {
+            return [$value];
+        }));
+    }
+
     #[IgnoreDeprecations]
     public function testPrepend()
     {

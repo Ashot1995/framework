@@ -912,6 +912,23 @@ class Arr
     }
 
     /**
+     * Run a map over each of the items in the array and flatten the result by a single level.
+     *
+     * @template TKey of array-key
+     * @template TValue
+     * @template TFlatMapKey of array-key
+     * @template TFlatMapValue
+     *
+     * @param  array<TKey, TValue>  $array
+     * @param  callable(TValue, TKey): (\Illuminate\Support\Collection<TFlatMapKey, TFlatMapValue>|array<TFlatMapKey, TFlatMapValue>)  $callback
+     * @return array<TFlatMapKey, TFlatMapValue>
+     */
+    public static function flatMap(array $array, callable $callback)
+    {
+        return (new Collection($array))->flatMap($callback)->all();
+    }
+
+    /**
      * Push an item onto the beginning of an array.
      *
      * @param  array  $array
