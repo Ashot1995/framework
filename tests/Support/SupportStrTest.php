@@ -23,7 +23,22 @@ class SupportStrTest extends TestCase
         $this->assertSame('Taylor___', Str::words('Taylor Otwell', 1, '___'));
         $this->assertSame('Taylor Otwell', Str::words('Taylor Otwell', 3));
         $this->assertSame('Taylor Otwell', Str::words('Taylor Otwell', -1, '...'));
+        $this->assertSame('Taylor Otwell', Str::words('Taylor Otwell', 0, '...'));
         $this->assertSame('', Str::words('', 3, '...'));
+    }
+
+    public function testStringCanBeLimitedByLargeWordCounts(): void
+    {
+        $string = trim(str_repeat('word ', 2000));
+
+        $this->assertSame($string, Str::words($string, 5000));
+        $this->assertSame($string, Str::words($string, 2000));
+        $this->assertSame(trim(str_repeat('word ', 1500)).'...', Str::words($string, 1500));
+
+        $multibyte = trim(str_repeat('这是 ', 1200));
+
+        $this->assertSame(trim(str_repeat('这是 ', 1100)).'...', Str::words($multibyte, 1100));
+        $this->assertSame($multibyte, Str::words($multibyte, 1200));
     }
 
     public function testStringCanBeLimitedByWordsNonAscii()

@@ -798,13 +798,31 @@ class Str
      */
     public static function words($value, $words = 100, $end = '...')
     {
-        preg_match('/^\s*+(?:\S++\s*+){1,'.$words.'}/u', $value, $matches);
-
-        if (! isset($matches[0]) || static::length($value) === static::length($matches[0])) {
+        if ($words <= 0) {
             return $value;
         }
 
-        return rtrim($matches[0]).$end;
+        if ($words <= 1000) {
+            preg_match('/^\s*+(?:\S++\s*+){1,'.$words.'}/u', $value, $matches);
+
+            if (! isset($matches[0]) || static::length($value) === static::length($matches[0])) {
+                return $value;
+            }
+
+            return rtrim($matches[0]).$end;
+        }
+
+        // Larger limits overflow PCRE's compiled pattern size when unrolled
+        // into a bounded quantifier, so the cut is located by offset instead.
+        preg_match_all('/\S++/u', $value, $matches, PREG_OFFSET_CAPTURE);
+
+        if (count($matches[0]) <= $words) {
+            return $value;
+        }
+
+        $lastWord = $matches[0][$words - 1];
+
+        return rtrim(substr($value, 0, $lastWord[1] + strlen($lastWord[0]))).$end;
     }
 
     /**
